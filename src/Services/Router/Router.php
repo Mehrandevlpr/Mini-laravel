@@ -6,6 +6,7 @@ use App\config\Config;
 use App\Exceptions\Router\ClassException;
 use App\Exceptions\Router\MethodException;
 use App\Exceptions\Router\RouteException;
+use App\Services\View\View;
 use App\Utilities\Request\Request;
 //use App\Services\View\View;
 //use App\Utilities\Request\Request as RequestRequest;
@@ -21,6 +22,7 @@ class Router
 
     public static function start()
     {
+
         $request = new Request();
         $currentUri = $request->getCurrentRoute();
 
@@ -32,9 +34,8 @@ class Router
 
         if (!(in_array(end($uri_segment), \array_keys($getAllRoutes)))) {
 
-            //view::renderErrorTemplate( 'error' );
-            throw new RouteException();
-            die();
+            View::renderErrorTemplate('404');
+            exit();
         }
 
         [$class, $method] = \explode('@', $getAllRoutes[$currentUri]['target']);
@@ -43,7 +44,7 @@ class Router
         if (!class_exists($className)) {
 
             throw new ClassException();
-            die();
+            exit();
         }
 
 
@@ -52,10 +53,9 @@ class Router
         if (!\method_exists($fullPathClass, $method)) {
 
             throw new  MethodException();
-            die();
+            exit();
         }
 
         $fullPathClass->$method($uri_segments[2] ?? null);
-        var_dump('yessss');
     }
 }
