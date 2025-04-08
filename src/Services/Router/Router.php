@@ -35,6 +35,7 @@ class Router
         if (!(in_array(end($uri_segment), \array_keys($getAllRoutes)))) {
 
             View::renderErrorTemplate('404');
+            throw new RouteException();
             exit();
         }
 
