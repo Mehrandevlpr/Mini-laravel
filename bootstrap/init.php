@@ -6,7 +6,10 @@
 include_once "bootstrap.php";
 
 include_once BASE_PATH . "vendor/autoload.php";
-//use Medoo\Medoo;
+
+$dotenv = Dotenv\Dotenv::createImmutable(BASE_PATH);
+$dotenv->load();
+
 
 
 

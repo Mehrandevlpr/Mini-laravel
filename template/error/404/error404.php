@@ -4,7 +4,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" href="<?= BASE_STORAGE_URL . '/error/404/style.css' ?>">
+	<link rel="stylesheet" href="<?= $_ENV['BASE_STORAGE_URL'] . '/error/404/style.css' ?>">
 	<title>404</title>
 </head>
 
@@ -190,7 +190,7 @@
 			<polygon id="sword_blade_shadow" class="st0" points="436.7,197 440.3,192.3 369,138.5 368.5,138.4 373.5,153 	" />
 		</g>
 	</svg>
-	<script src="<?= BASE_STORAGE_URL . '/error/404/js.js' ?>"></script>
+	<script src="<?= $_ENV['BASE_STORAGE_URL'] . '/error/404/js.js' ?>"></script>
 </body>
 
 </html>

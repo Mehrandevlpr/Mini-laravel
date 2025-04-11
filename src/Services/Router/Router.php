@@ -2,14 +2,14 @@
 
 namespace App\Services\Router;
 
-use App\config\Config;
+
 use App\Exceptions\Router\ClassException;
-use App\Exceptions\Router\MethodException;
+use App\Exceptions\Router\ClassMethodException;
 use App\Exceptions\Router\RouteException;
+use App\Services\Router\Route;
 use App\Services\View\View;
 use App\Utilities\Request\Request;
-//use App\Services\View\View;
-//use App\Utilities\Request\Request as RequestRequest;
+
 
 class Router
 {
@@ -17,46 +17,76 @@ class Router
     const BASE_MIDELLWARE = "\\App\\Middlewares\\";
     const BASE_CONTROLLER = "\\App\\Controllers\\";
 
+    private $request;
+    private $current_route;
+    private $routes = [];
 
-    public function __construct() {}
 
-    public static function start()
+    public function __construct()
+    {
+        $this->request = new Request();
+        $this->routes  = Route::routes();
+        $this->current_route = $this->findRoute($this->request) ?? null;
+        return $this;
+    }
+
+    private function findRoute(Request $request)
     {
 
-        $request = new Request();
-        $currentUri = $request->getCurrentRoute();
+        foreach ($this->routes as $route) {
+            if (in_array($request->method(), $route['methods']) && $request->uri() === $route['uri'])
+                return $route;
+        }
+        return null;
+    }
 
-        $getAllRoutes = Config::get('web');
+    public function run()
+    {
 
-        $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-        $uri_segment = explode('/php_expert', $path);
+        #dispatch to page not found view
+        if (is_null($this->current_route)) {
+            $this->dispatch404();
+            die();
+        };
 
+        $this->dispatch();
+    }
 
-        if (!(in_array(end($uri_segment), \array_keys($getAllRoutes)))) {
+    private function dispatch404()
+    {
 
-            View::renderErrorTemplate('404');
-            throw new RouteException();
-            exit();
+        View::renderErrorTemplate('404');
+        throw new RouteException();
+        exit();
+    }
+
+    private function dispatch()
+    {
+
+        $action = $this->current_route['action'][0];
+
+        #is callable action
+        if (is_callable($action)) {
+            $action();
         }
 
-        [$class, $method] = \explode('@', $getAllRoutes[$currentUri]['target']);
-        $className =  self::BASE_CONTROLLER . $class;
+        #is string action
+        if (is_string($action))
+            $action = \explode('@', $action);
 
-        if (!class_exists($className)) {
+        #is string action
+        if (is_array($action)) {
 
-            throw new ClassException();
-            exit();
+            $className =  self::BASE_CONTROLLER . $action[0];
+            $method = $action[1];
+
+            if (!class_exists($className))
+                throw new ClassException();
+            $controller = new $className();
+
+            if (!method_exists($controller, $method))
+                throw new ClassMethodException();
+            $controller->{$method}();
         }
-
-
-        $fullPathClass =  new $className($request);
-
-        if (!\method_exists($fullPathClass, $method)) {
-
-            throw new  MethodException();
-            exit();
-        }
-
-        $fullPathClass->$method($uri_segments[2] ?? null);
     }
 }
