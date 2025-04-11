@@ -18,5 +18,8 @@
         {
             "name": "researcher95"
         }
-    ]
+    ],
+    "require": {
+        "vlucas/phpdotenv": "^5.6"
+    }
 }

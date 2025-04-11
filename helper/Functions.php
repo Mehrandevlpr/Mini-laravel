@@ -6,7 +6,7 @@ function basePath($path)
 
 function baseUrl($uri)
 {
-    return BASE_URL . $uri;
+    return $_ENV['BASE_PATH']. $uri;
 }
 
 

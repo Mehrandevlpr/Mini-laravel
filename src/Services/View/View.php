@@ -4,10 +4,7 @@ namespace App\Services\View;
 
 class View
 {
-    public static function render(string $tpl, ?string $layout){
-          
-        
-    }
+    public static function render(string $tpl, ?string $layout) {}
 
     public static function renderErrorTemplate(string $tpl)
     {
