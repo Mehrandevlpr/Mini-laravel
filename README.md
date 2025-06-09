@@ -1,4 +1,4 @@
-# Mini-laravel ( No freamwork just pure php )
+# Mini-laravel ( No freamwork involve )
 # 🛍️ Extend as a Shopper
 
 A pure, modular and test-driven PHP project with JavaScript components. Designed for clean architecture, robust configuration management, and unit testing using PHPUnit.
